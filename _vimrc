@@ -98,39 +98,42 @@ endif
 set nocompatible                                      "禁用 Vi 兼容模式
 filetype off                                          "禁用文件类型侦测
 
+execute pathogen#infect()
+
 if g:islinux
-    set runtimepath+=~/.vim/pbundle/vundle/
+    set runtimepath+=~/.vim/bundle/vundle/
     call vundle#rc()
 else
-    set runtimepath+=$VIM/vimfiles/pbundle/vundle/
-    call vundle#rc('$VIM/vimfiles/pbundle/')
+    set runtimepath+=$VIM/vimfiles/bundle/vundle/
+    call vundle#rc('$VIM/vimfiles/bundle/')
 endif
-
-execute pathogen#infect()
 
 Bundle 'xolox/vim-misc'
 Bundle 'xolox/vim-session'
-" 以下为要安装或更新的插件，不同仓库都有（具体书写规范请参考帮助）
 Bundle 'a.vim'
 Bundle 'Align'
-" Bundle 'jiangmiao/auto-pairs'
-" Bundle 'bufexplorer.zip'
 Bundle 'ccvext.vim'
 Bundle 'Yggdroot/indentLine'
-" Bundle 'Mark--Karkat'
-" Bundle 'scrooloose/nerdcommenter'
 Bundle 'scrooloose/nerdtree'
-" Bundle 'OmniCppComplete'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'msanders/snipmate.vim'
-" Bundle 'wesleyche/SrcExpl'
-" Bundle 'std_c.zip'
 Bundle 'tpope/vim-surround'
 Bundle 'majutsushi/tagbar'
 Bundle 'ZoomWin'
 Bundle 'tpope/vim-markdown'
 Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'cSyntaxAfter'
+Bundle "scrooloose/syntastic"
+Bundle 'fatih/vim-go'
+
+" Bundle 'Valloric/YouCompleteMe'
+" Bundle 'wesleyche/SrcExpl'
+" Bundle 'std_c.zip'
+" Bundle 'OmniCppComplete'
+" Bundle 'Mark--Karkat'
+" Bundle 'scrooloose/nerdcommenter'
+" Bundle 'jiangmiao/auto-pairs'
+" Bundle 'bufexplorer.zip'
 " Bundle 'javacomplete'
 " Bundle 'vim-javacompleteex'               "更好的 Java 补全插件
 " Bundle 'mattn/emmet-vim'
@@ -140,9 +143,6 @@ Bundle 'cSyntaxAfter'
 " Bundle 'taglist.vim'
 " Bundle 'TxtBrowser'
 " Bundle 'davidhalter/jedi-vim'
-Bundle 'Valloric/YouCompleteMe'
-Bundle "scrooloose/syntastic"
-Bundle 'fatih/vim-go'
 " Bundle 'tomtom/quickfixsigns_vim'
 
 " -----------------------------------------------------------------------------
@@ -544,31 +544,6 @@ let g:tagbar_compact=1
 " -----------------------------------------------------------------------------
 " 用于分割窗口的最大化与还原
 " 常规模式下按快捷键 <c-w>o 在最大化与还原间切换
-"-------------------------------------------------------------
-"For Ycm
-"-------------------------------------------------------------
-"let g:ycm_global_ycm_extra_conf = '$VIM\vimfiles\bundle\YouCompleteMe\python\.ycm_extra_conf.py'
-" 设置转到定义处的快捷键为ALT + G，这个功能非常赞 
-" nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR> 
-" nmap <C-]> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR> 
-" 补全功能在注释中同样有效 
-let g:ycm_complete_in_comments=1  
-" 开启标签补全
-let g:ycm_collect_identifiers_from_tags_files = 1
-" 从第一个键入字符就开始罗列匹配项 
-let g:ycm_min_num_of_chars_for_completion=1
-"离开插入模式后自动关闭预览窗口
-"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-" 禁止缓存匹配项，每次都重新生成匹配项  
-let g:ycm_cache_omnifunc=0 
-set completeopt-=preview
-" 语法关键字补全              
-" let g:ycm_seed_identifiers_with_syntax=1  
-" 修改对C函数的补全快捷键，默认是CTRL + space，修改为ALT + ;  
-let g:ycm_key_invoke_completion = '<C-l>'
-
-"回车即选中当前项
-inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 " =============================================================================
 "                          << 以下为常用工具配置 >>
 " =============================================================================
@@ -1057,11 +1032,33 @@ let g:SrcExpl_refreshTime = 300
 " let g:SrcExpl_nextDefKey = 'n'
 let g:SrcExpl_gobackKey = '<s-SPACE>'
 
-let g:ycm_auto_trigger = 0
+
+"-------------------------------------------------------------
+"For Ycm
+"-------------------------------------------------------------
+"let g:ycm_global_ycm_extra_conf = '$VIM\vimfiles\bundle\YouCompleteMe\python\.ycm_extra_conf.py'
+" 设置转到定义处的快捷键为ALT + G，这个功能非常赞 
+" nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR> 
+" nmap <C-]> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR> 
+" 补全功能在注释中同样有效 
+let g:ycm_complete_in_comments=1
+" 开启标签补全
+let g:ycm_collect_identifiers_from_tags_files = 1
+" 从第一个键入字符就开始罗列匹配项 
+let g:ycm_min_num_of_chars_for_completion=1
+"离开插入模式后自动关闭预览窗口
+"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+" 禁止缓存匹配项，每次都重新生成匹配项  
+let g:ycm_cache_omnifunc=0 
+set completeopt-=preview
+" 语法关键字补全              
+" let g:ycm_seed_identifiers_with_syntax=1  
+"
+" 修改对C函数的补全快捷键，默认是CTRL + space，修改为ALT + ;  
+let g:ycm_key_invoke_completion = '<C-l>'
+
 let g:ycm_filetype_specific_completion_to_disable = {
-	\ 'python': 1
 	\}
 
-" let g:ycm_filetype_blacklist = {
-	" \ 'python' : 1,
-	" \}
+let g:ycm_filetype_blacklist = {
+	\}
