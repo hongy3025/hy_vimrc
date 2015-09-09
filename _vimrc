@@ -110,27 +110,29 @@ execute pathogen#infect()
 
 Bundle 'xolox/vim-misc'
 Bundle 'xolox/vim-session'
-" 以下为要安装或更新的插件，不同仓库都有（具体书写规范请参考帮助）
 Bundle 'a.vim'
 Bundle 'Align'
-" Bundle 'jiangmiao/auto-pairs'
-" Bundle 'bufexplorer.zip'
 Bundle 'ccvext.vim'
 Bundle 'Yggdroot/indentLine'
-" Bundle 'Mark--Karkat'
-" Bundle 'scrooloose/nerdcommenter'
 Bundle 'scrooloose/nerdtree'
-" Bundle 'OmniCppComplete'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'msanders/snipmate.vim'
-" Bundle 'wesleyche/SrcExpl'
-" Bundle 'std_c.zip'
 Bundle 'tpope/vim-surround'
 Bundle 'majutsushi/tagbar'
 Bundle 'ZoomWin'
 Bundle 'tpope/vim-markdown'
 Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'cSyntaxAfter'
+Bundle "scrooloose/syntastic"
+Bundle 'fatih/vim-go'
+
+" Bundle 'jiangmiao/auto-pairs'
+" Bundle 'bufexplorer.zip'
+" Bundle 'Mark--Karkat'
+" Bundle 'scrooloose/nerdcommenter'
+" Bundle 'OmniCppComplete'
+" Bundle 'wesleyche/SrcExpl'
+" Bundle 'std_c.zip'
 " Bundle 'javacomplete'
 " Bundle 'vim-javacompleteex'               "更好的 Java 补全插件
 " Bundle 'mattn/emmet-vim'
@@ -140,9 +142,7 @@ Bundle 'cSyntaxAfter'
 " Bundle 'taglist.vim'
 " Bundle 'TxtBrowser'
 " Bundle 'davidhalter/jedi-vim'
-Bundle 'Valloric/YouCompleteMe'
-Bundle "scrooloose/syntastic"
-Bundle 'fatih/vim-go'
+" Bundle 'Valloric/YouCompleteMe'
 " Bundle 'tomtom/quickfixsigns_vim'
 
 " -----------------------------------------------------------------------------
@@ -259,7 +259,7 @@ set cinoptions=:0g0t0(sus
 """---
 
 set history=1000
-set clipboard+=unnamed "sharing windows clipboard
+set clipboard=unnamed,unnamedplus "sharing windows clipboard
 set viminfo+=! " make sure it can save viminfo
 
 "--------------------
