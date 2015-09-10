@@ -234,9 +234,8 @@ let s:SrcExpl_isDebug = 0
 " Runing switch flag
 let s:SrcExpl_isRunning = 0
 
-" Set the highlight color
-" hi SrcExpl_HighLight term=bold guifg=Black guibg=Magenta ctermfg=Black ctermbg=Magenta
-" hi SrcExpl_HighLight term=reverse ctermfg=0 ctermbg=40 guibg=#210000
+" hi! def link SrcExpl_HighLight Search
+hi SrcExpl_HighLight ctermfg=0 ctermbg=40 guibg=#490000
 
 " }}}
 
@@ -997,9 +996,11 @@ endfunction " }}}
 " Highlight current line
 
 function! <SID>SrcExpl_ColorLine()
+    silent! syn clear SrcExpl_HighLight
 	" hi SrcExpl_HighLight term=reverse ctermfg=0 ctermbg=40 guibg=#340000
-	hi SrcExpl_HighLight term=reverse ctermfg=0 ctermbg=40 guibg=#490000
-	exe 'match SrcExpl_HighLight /.\%' . line(".") . 'l/'
+	" hi SrcExpl_HighLight ctermfg=0 ctermbg=40 guibg=#490000
+	exe 'syn match SrcExpl_HighLight /.\%' . line(".") . 'l/'
+	" exec 'syn match GrepUtilsPreviewPosition "\%' . line(".") . 'l.*"'
 endfunction " }}}
 
 " SrcExpl_ColorExpr() {{{
@@ -1007,8 +1008,10 @@ endfunction " }}}
 " Highlight the symbol of definition
 
 function! <SID>SrcExpl_ColorExpr()
-	hi SrcExpl_HighLight term=reverse ctermfg=0 ctermbg=40 guibg=#490000
+    silent! syn clear SrcExpl_HighLight
+	" hi SrcExpl_HighLight ctermfg=0 ctermbg=40 guibg=#490000
 	exe 'match SrcExpl_HighLight "\%' . line(".") . 'l\%' . col(".") . 'c\k*"'
+	" exec 'syn match GrepUtilsPreviewPosition "\%' . line(".") . 'l.*"'
 endfunction " }}}
 
 " SrcExpl_MatchExpr() {{{
@@ -1224,7 +1227,7 @@ function! <SID>SrcExpl_GoQuickfix()
 		if <SID>SrcExpl_WinActive()
 			call cursor(l:num, 1)
 			normal zt
-			call <SID>SrcExpl_MatchExpr()
+			" call <SID>SrcExpl_MatchExpr()
 			call <SID>SrcExpl_ColorLine()
 			call <SID>SrcExpl_SetCurrMark()
 			exec "normal! 3\<C-Y>"

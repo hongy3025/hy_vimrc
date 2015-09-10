@@ -98,6 +98,8 @@ endif
 set nocompatible                                      "禁用 Vi 兼容模式
 filetype off                                          "禁用文件类型侦测
 
+let g:pathogen_disabled = [ 'YouCompleteMe' ]
+
 execute pathogen#infect()
 
 if g:islinux
@@ -125,10 +127,10 @@ Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'cSyntaxAfter'
 Bundle "scrooloose/syntastic"
 Bundle 'fatih/vim-go'
+Bundle 'Shougo/neocomplete'
 
 " Bundle 'Mark--Karkat'
 " Bundle 'OmniCppComplete'
-" Bundle 'Shougo/neocomplete'
 " Bundle 'TxtBrowser'
 " Bundle 'Valloric/YouCompleteMe'
 " Bundle 'bufexplorer.zip'
