@@ -971,7 +971,7 @@ endfunction
 
 function! s:MarkCcLine()
   silent! syn clear GrepUtilsPreviewPosition
-  if s:prevCurHit > 1
+  if s:prevCurHit > 0
     exec 'syn match GrepUtilsPreviewPosition "\%'.s:prevCurHit.'l.*"'
   endif
 endfunction
@@ -988,13 +988,13 @@ function! s:GNextImpl(forward, cnt)
   endif
   if a:forward == 0
     " Calculate absolute error.
-    let newHit = (a:cnt> 0) ? (a:cnt+1) : line('.')
+    let newHit = (a:cnt>0) ? (a:cnt) : line('.')
   else
     " Calculate relative error.
     let newHit = s:prevCurHit + (a:forward * a:cnt)
   endif
-  if newHit < 2
-    let newHit = 2
+  if newHit < 1
+    let newHit = 1
   elseif newHit > line('$')
     let newHit = line('$')
   endif
