@@ -405,13 +405,16 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
 " Define dictionary.
+"
 let g:neocomplete#sources#dictionary#dictionaries = {
     \ 'default' : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist',
 	\ }
+
+" 'go' : '__disabled__gocomplete#Complete',
 let g:neocomplete#sources#omni#functions = {
-	\ 'go' : '__disabled__gocomplete#Complete',
 	\ }
+
 " Enable omni completion.
 " autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 " autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
