@@ -128,6 +128,7 @@ Bundle 'cSyntaxAfter'
 Bundle "scrooloose/syntastic"
 Bundle 'fatih/vim-go'
 Bundle 'Shougo/neocomplete'
+Bundle 'http://git.oschina.net/qiuchangjie/ShaderHighLight'
 
 " Bundle 'Mark--Karkat'
 " Bundle 'OmniCppComplete'
@@ -505,7 +506,10 @@ let g:syntastic_enable_balloons = 0
 " let g:syntastic_python_checkers = ['flake8']
 " let g:syntastic_python_flake8_args = "--ignore=E302,E501"
 let g:syntastic_python_checkers = ['pylint']
-" let g:syntastic_python_pylint_args = "--rcfile=f:/g53/svn/trunk/client/script/pylintrc"
+let g:syntastic_python_pylint_args = "--rcfile=f:/g53/conf/pylintrc"
+"let g:syntastic_python_checkers = []
+"let g:syntastic_python_pylint_args = ''
+
 nnoremap <silent> <F10> :SyntasticCheck<cr>
 
 " -----------------------------------------------------------------------------
@@ -657,6 +661,7 @@ autocmd FileType python setlocal smarttab
 autocmd FileType python setlocal shiftwidth=4
 autocmd FileType python setlocal expandtab
 autocmd FileType python setlocal iskeyword-=
+autocmd FileType python setlocal wrap
 autocmd FileType python noremap <M-d> :call jedi#goto()<CR>
 autocmd FileType python noremap <M-r> :call jedi#usages()<CR>
 
@@ -702,13 +707,13 @@ let g:ctrlp_map = ',f'
 let g:ctrlp_working_path_mode = ''
 let g:ctrlp_custom_ignore = {
 	\ 'dir':  '\v[\/]\.(git|hg|svn)$',
-	\ 'file': '\v\.(exe|so|dll)$',
+	\ 'file': '\v\.(exe|so|dll|log)$',
 	\ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
 	\ }
 let g:ctrlp_switch_buffer = 'ET'
 let g:ctrlp_use_caching = 1
 let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
-let g:ctrlp_max_files = 30000
+let g:ctrlp_max_files = 300000
 let g:ctrlp_max_depth = 30
 let g:ctrlp_follow_symlinks = 0
 let g:ctrlp_key_loop = 1
@@ -751,7 +756,7 @@ let g:ctrlp_prompt_mappings = {
 	\ 'PrtExit()':            ['<esc>', '<c-c>', '<c-g>'],
 	\ }
 
-let g:ctrlp_extensions = ['buffertag']
+let g:ctrlp_extensions = ['buffertag', 'autoignore']
 
 "-------------------------------------------------------------------------------
 " mapping
@@ -916,6 +921,10 @@ function! MyXGrep(args)
 	exec "Grepp -r --include=*.go --include=*.lua --include=*.py --include=*.inl --include=*.c --include=*.h --include=*.cpp --include=*.hpp --include=*.vim " . a:args . " ."
 endfunction
 
+function! G53XGrep(args)
+	exec "Grepp -r --include=*.go --include=*.lua --include=*.py --include=*.inl --include=*.c --include=*.h --include=*.cpp --include=*.hpp --include=*.vim " . a:args . " ./server/src ./client/script"
+endfunction
+
 function! LpcCC(args)
 	set errorformat=%f\ line\ %l:\ %m
 	cexpr system("lcc " . a:args)
@@ -997,7 +1006,10 @@ let g:jedi#auto_close_doc=1
 let g:jedi#popup_on_dot=1
 let g:jedi#popup_select_first=0
 
-let g:session_autoload=0
+let g:session_autoload="no"
+let g:session_autosave="yes"
+let g:session_autosave_periodic=5
+let g:session_autosave_silent=1
 
 let Grep_Path = $VIMRUNTIME . '/egrep -H'
 let Egrep_Path = $VIMRUNTIME . '/egrep -H'
@@ -1064,3 +1076,9 @@ let g:ycm_filetype_specific_completion_to_disable = {
 
 let g:ycm_filetype_blacklist = {
 	\}
+
+let g:pymode_folding = 0
+let g:pymode_lint = 0
+let g:pymode_lint_on_write = 0
+let g:pymode_lint_checkers = ["pylint"]
+let g:pymode_rope = 0
