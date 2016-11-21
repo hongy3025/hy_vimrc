@@ -3,9 +3,20 @@
 Changelog
 ---------
 
+0.10.0 (2016-06-)
++++++++++++++++++
+
+- Actual semantic completions for the complete Python syntax.
+- Basic type inference for ``yield from`` PEP 380.
+- PEP 484 support (most of the important features of it). Thanks Claude! (@reinhrst)
+- Added ``get_line_code`` to ``Definition`` and ``Completion`` objects.
+- Again a lot of internal changes.
+
 0.9.0 (2015-04-10)
 ++++++++++++++++++
 
+- The import logic has been rewritten to look more like Python's. There is now
+  an ``Evaluator.modules`` import cache, which resembles ``sys.modules``.
 - Integrated the parser of 2to3. This will make refactoring possible. It will
   also be possible to check for error messages (like compiling an AST would give)
   in the future.

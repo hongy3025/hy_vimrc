@@ -83,6 +83,9 @@ TestClass.var_local.
 
 #? int()
 TestClass().ret(1)
+# Should not return int(), because we want the type before `.ret(1)`.
+#? 11 TestClass()
+TestClass().ret(1)
 #? int()
 inst.ret(1)
 
@@ -131,6 +134,8 @@ A().addition
 A().addition = None
 #? 8 int()
 A(1).addition = None
+#? 1 A
+A(1).addition = None
 a = A()
 #? 8 int()
 a.addition = None
@@ -155,6 +160,7 @@ class Mixin(SuperClass):
     def method_mixin(self):
         return int
 
+#? 20 SuperClass
 class SubClass(SuperClass):
     class_sub = 3
     def __init__(self):
@@ -238,7 +244,10 @@ class V:
 V(1).b()
 #? int()
 V(1).c()
-#? []
+#?
+V(1).d()
+# Only keywords should be possible to complete.
+#? ['is', 'in', 'not', 'and', 'or', 'if']
 V(1).d()
 
 
@@ -285,20 +294,6 @@ class A():
 
 #? list()
 A().b()
-
-# -----------------
-# recursions
-# -----------------
-def Recursion():
-    def recurse(self):
-        self.a = self.a
-        self.b = self.b.recurse()
-
-#?
-Recursion().a
-
-#?
-Recursion().b
 
 # -----------------
 # ducktyping

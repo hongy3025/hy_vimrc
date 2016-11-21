@@ -33,11 +33,12 @@ set fileencoding=utf-8                                "设置当前文件编码
 set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1     "设置支持打开的文件的编码
 
 " 设置代码配色方案
-if g:isGUI 
+if g:isGUI
 	colorscheme molokai
 	if g:iswindows
 		set guifont=Monaco:h9:cANSI
-		set guifontwide=微软雅黑:h9.5:w4.5:cANSI
+		" set guifont=Consolas:h11:cANSI:qDRAFT
+		" set guifontwide=微软雅黑:h9.5:w4.5:cANSI
 		" set guifontwide=新宋体:h11:cANSI
 		" set guifont=Inconsolata:h11:cANSI
 	else
@@ -60,7 +61,7 @@ if g:isGUI && g:iswindows
 endif
 
 if g:isGUI
-    set guioptions=ecr
+    set guioptions=ec
 	map <silent> <F11> :if &guioptions =~# 'm' <Bar>
 		\set guioptions-=m <Bar>
 	\else <Bar>
@@ -96,9 +97,7 @@ endif
 " 如果想在 windows 安装就必需先安装 "git for window"，可查阅网上资料
 
 set nocompatible                                      "禁用 Vi 兼容模式
-filetype off                                          "禁用文件类型侦测
-
-let g:pathogen_disabled = [ 'YouCompleteMe' ]
+filetype on                                           "禁用文件类型侦测
 
 execute pathogen#infect()
 
@@ -126,16 +125,17 @@ Bundle 'tpope/vim-markdown'
 Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'cSyntaxAfter'
 Bundle "scrooloose/syntastic"
-Bundle 'fatih/vim-go'
 Bundle 'Shougo/neocomplete'
+
 Bundle 'http://git.oschina.net/qiuchangjie/ShaderHighLight'
 
+" Bundle 'davidhalter/jedi-vim'
+" Bundle 'fatih/vim-go'
 " Bundle 'Mark--Karkat'
 " Bundle 'OmniCppComplete'
 " Bundle 'TxtBrowser'
 " Bundle 'Valloric/YouCompleteMe'
 " Bundle 'bufexplorer.zip'
-" Bundle 'davidhalter/jedi-vim'
 " Bundle 'ervandew/supertab'                "有时与 snipmate 插件冲突
 " Bundle 'javacomplete'
 " Bundle 'jiangmiao/auto-pairs'
@@ -147,6 +147,33 @@ Bundle 'http://git.oschina.net/qiuchangjie/ShaderHighLight'
 " Bundle 'tomtom/quickfixsigns_vim'
 " Bundle 'vim-javacompleteex'               "更好的 Java 补全插件
 " Bundle 'wesleyche/SrcExpl'
+"
+" NeoBundle 'EasyGrep'
+" NeoBundle 'Mark--Karkat'
+" NeoBundle 'Shougo/unite-help'
+" NeoBundle 'Shougo/unite-outline'
+" NeoBundle 'Shougo/unite.vim'
+" NeoBundle 'Shougo/vimproc.vim', { 'build' : { 'unix' : 'make -f make_unix.mak', }, }
+" NeoBundle 'Shougo/vimshell.vim'
+" NeoBundle 'Yggdroot/indentLine'
+" NeoBundle 'a.vim'
+" NeoBundle 'bling/vim-airline'
+" NeoBundle 'bufexplorer.zip'
+" NeoBundle 'chrisbra/csv.vim'
+" NeoBundle 'cscope_macros.vim'
+" NeoBundle 'jsfaint/gen_tags.vim'
+" NeoBundle 'majutsushi/tagbar'
+" NeoBundle 'matchit.zip'
+" NeoBundle 'mbbill/fencview'
+" NeoBundle 'mhinz/vim-signify'
+" NeoBundle 'mhinz/vim-startify'
+" NeoBundle 'osyo-manga/unite-quickfix'
+" NeoBundle 'scrooloose/nerdcommenter'
+" NeoBundle 'sjl/gundo.vim'
+" NeoBundle 'tpope/vim-fugitive'
+" NeoBundle 'tpope/vim-speeddating'
+" NeoBundle 'tsukkee/unite-tag'
+" NeoBundle 'xml.vim'
 
 " -----------------------------------------------------------------------------
 "  < 编码配置 >
@@ -193,7 +220,7 @@ set smartcase                                         "如果搜索模式包含�
 
 set path=.,**
 if (g:iswindows)
-set grepprg=$VIMRUNTIME/egrep\ -nH
+set grepprg=$VIMRUNTIME/ag\ --vimgrep
 else
 set grepprg=egrep\ -nH
 endif
@@ -457,10 +484,6 @@ let g:NERDTreeMapActivateNode = 'e'
 " let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
 " let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
 " let OmniCpp_DefaultNamespaces = ["_GLIBCXX_STD"]
-" -----------------------------------------------------------------------------
-"  < powerline 插件配置 >
-" -----------------------------------------------------------------------------
-" 状态栏插件，更好的状态栏效果
 
 " -----------------------------------------------------------------------------
 "  < repeat 插件配置 >
@@ -497,12 +520,16 @@ let c_cpp_comments = 0
 "  < Syntastic 插件配置 >
 " -----------------------------------------------------------------------------
 " 用于保存文件时查检语法
-let g:syntastic_check_on_open = 0
+"
+let g:syntastic_mode_map = {
+	\ "mode": "passive",
+	\ "active_filetypes": [],
+	\ "passive_filetypes": [] }
+
 let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_wq = 1
-let g:syntastic_check_on_w = 1
 let g:syntastic_enable_balloons = 0
+
 " let g:syntastic_python_checkers = ['flake8']
 " let g:syntastic_python_flake8_args = "--ignore=E302,E501"
 let g:syntastic_python_checkers = ['pylint']
@@ -647,7 +674,7 @@ set tags=tags,../tags,../../tags,../../../tags
 " EnhCommentify
 "--------------------------------
 let g:EnhCommentifyPretty = 'Yes'
-let g:EnhCommentifyMultiPartBlocks = 'yes' 
+let g:EnhCommentifyMultiPartBlocks = 'yes'
 let g:EnhCommentifyCommentsOp = 'yes'
 let g:EnhCommentifyRespectIndent = 'Yes'
 let g:EnhCommentifyPretty = 'Yes'
@@ -763,15 +790,8 @@ let g:ctrlp_extensions = ['buffertag', 'autoignore']
 "-------------------------------------------------------------------------------
 noremap <f2>    :call AutoHighlight_Toggle()<cr>
 noremap <s-f2>  :call AutoHighlight_ToggleLock()<cr>
-noremap ,<f2>   :call AutoHighlight_ToggleLock()<cr>
 
-nmap <f3> :Xg "\<<C-R>=expand("<cword>")<CR>\>"<CR> 
-
-nmap <F4> :SrcExplToggle<CR>
-
-" noremap <f3>	:call AutoPreview_Toggle()<cr>
-" noremap <s-f3>	:silent! call SmartRef_PFindRefInThisFile()<cr>
-" noremap ,<f3>	:silent! call SmartRef_PFindRefInThisFile()<cr>
+nmap <f3> :Xg "\b<C-R>=expand("<cword>")<CR>\b"<CR>
 
 noremap <f5>	:cprev<cr>
 noremap <f6>    :cnext<cr>
@@ -779,13 +799,6 @@ noremap <f6>    :cnext<cr>
 noremap <F7>	:.w !pbcopy<CR><CR>
 vnoremap <F7>	:w !pbcopy<CR><CR>
 noremap <s-F7>	:set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
-
-
-noremap <f9>    :call g:SrcExpl_GoToCurrent()<cr>
-" nnoremap <silent> <F9> :call GetCurPreviewFilePath()<cr>
-
-" noremap <f9>    :silent make<cr>:cwindow<cr>:cc<cr>
-" noremap <f9>    :w!<cr>:silent make<cr>:cwindow<cr>:cc<cr>
 
 noremap <right> <c-w>l
 noremap <left>  <c-w>h
@@ -796,7 +809,6 @@ noremap ,r		:CtrlPTag<cr>
 noremap ,s		:CtrlPBufTag<cr>
 noremap ,q		:CtrlPMRUFiles<cr>
 noremap ,b		:CtrlPBuffer<cr>
-" noremap ,x		:b#<bar>bd#<CR>
 
 
 noremap ,p		:call SmartClist_PNav(0)<cr>
@@ -823,14 +835,14 @@ cnoremap <C-f> <S-Right>
 noremap <M-z> <C-o>
 
 " noremap <2-LeftMouse> :silent! normal <c-]><cr>
-" noremap <MiddleMouse> <c-t> 
-" noremap <RightMouse> <c-o> 
+" noremap <MiddleMouse> <c-t>
+" noremap <RightMouse> <c-o>
 
 let g:qb_hotkey = ",B"
 let g:src_file_ext="lua,c,cpp,h,py,txt"
 
 function! SvnDiffInNewTab(args)
-	tabnew 
+	tabnew
 	exec "read !svn diff " . a:args
    	setfiletype diff
 	setlocal nomodifiable
@@ -839,16 +851,12 @@ function! SvnDiffInNewTab(args)
 endfunction
 
 function! SvnBlameInNewTab(file)
-	tabnew 
+	tabnew
 	exec "read !svn blame " . a:file
    	setfiletype lua
 	setlocal nomodifiable
 	setlocal buftype=nofile
 	normal gg
-endfunction
-
-function! MyGrep(args)
-	exec "grep -E -r " . a:args . " ."
 endfunction
 
 function! OpenInNewTab(args)
@@ -865,21 +873,6 @@ function! OpenInNewTab(args)
 	else
 		exec "edit " . a:args
 	endif
-endfunction
-
-function! MyCGrep(args)
-	exec "grep -E -r --include=*.c --include=*.h --include=*.cpp --include=*.hpp " . a:args . " ."
-	exec "copen"
-endfunction
-
-function! MyLGrep(args)
-	exec "grep -E -r --include=*.lua " . a:args . " ."
-	exec "copen"
-endfunction
-
-function! MyPythonGrep(args)
-	exec "grep -r --include=*.py " . a:args . " ."
-	exec "copen"
 endfunction
 
 function! MyPreviewQuickfix()
@@ -908,42 +901,21 @@ function! MyPreviewQuickfix()
 	endif
 endfunction
 
-" function! MyXGrep(args)
-	" silent! pedit!
-	" silent! wincmd P		" 跳转至预览窗口
-	" exec "grep -r --include=*.go --include=*.lua --include=*.py --include=*.inl --include=*.c --include=*.h --include=*.cpp --include=*.hpp --include=*.vim " . a:args . " ."
-	" exec "copen"
-	" setlocal updatetime=500
-	" autocmd CursorHold <buffer> call MyPreviewQuickfix()
-" endfunction
+function! MyGrep(args)
+	exec "AsyncRun! ag --vimgrep  " . a:args
+endfunction
 
 function! MyXGrep(args)
-	exec "Grepp -r --include=*.go --include=*.lua --include=*.py --include=*.inl --include=*.c --include=*.h --include=*.cpp --include=*.hpp --include=*.vim " . a:args . " ."
-endfunction
-
-function! G53XGrep(args)
-	exec "Grepp -r --include=*.go --include=*.lua --include=*.py --include=*.inl --include=*.c --include=*.h --include=*.cpp --include=*.hpp --include=*.vim " . a:args . " ./server/src ./client/script"
-endfunction
-
-function! LpcCC(args)
-	set errorformat=%f\ line\ %l:\ %m
-	cexpr system("lcc " . a:args)
-endfunction
-
-function! Cimp(args)
-	exec "normal ^f(bi" . a:args . "::" . "\<ESC><</);\<CR>f;xa {\<CR>}\<CR>\<ESC>"
+	copen
+	silent! wincmd w
+	exec "AsyncRun! ag --vimgrep --batch --cc --coffee --cpp --go --hh --ini --js --java --lua --make --objc --objcpp --python " . a:args
 endfunction
 
 command! -nargs=* -complete=file Svndiff call SvnDiffInNewTab(<q-args>)
 command! Svnblame call SvnBlameInNewTab(expand("%"))
 command! -nargs=* -complete=file G call MyGrep(<q-args>)
-command! -nargs=* -complete=file Cg call MyCGrep(<q-args>)
-command! -nargs=* -complete=file Lg call MyLGrep(<q-args>)
-command! -nargs=* -complete=file Pg call MyPythonGrep(<q-args>)
 command! -nargs=* -complete=file Xg call MyXGrep(<q-args>)
 command! -nargs=* -complete=file T call OpenInNewTab(<q-args>)
-command! -nargs=* -complete=file Lcc call LpcCC(<q-args>)
-command! -nargs=1 Cimp call Cimp(<q-args>)
 
 let g:netrw_preview=1
 
@@ -1051,34 +1023,38 @@ let g:SrcExpl_gobackKey = '<s-SPACE>'
 "For Ycm
 "-------------------------------------------------------------
 "let g:ycm_global_ycm_extra_conf = '$VIM\vimfiles\bundle\YouCompleteMe\python\.ycm_extra_conf.py'
-" 设置转到定义处的快捷键为ALT + G，这个功能非常赞 
-" nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR> 
-" nmap <C-]> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR> 
-" 补全功能在注释中同样有效 
-let g:ycm_complete_in_comments=1
+" 设置转到定义处的快捷键为ALT + G，这个功能非常赞
+" nmap <M-g> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-]> :YcmCompleter GoToDefinitionElseDeclaration <C-R>=expand("<cword>")<CR><CR>
+" 补全功能在注释中同样有效
+" let g:ycm_complete_in_comments=1
 " 开启标签补全
-let g:ycm_collect_identifiers_from_tags_files = 1
-" 从第一个键入字符就开始罗列匹配项 
-let g:ycm_min_num_of_chars_for_completion=1
+" let g:ycm_collect_identifiers_from_tags_files = 1
+" 从第一个键入字符就开始罗列匹配项
+" let g:ycm_min_num_of_chars_for_completion=1
 "离开插入模式后自动关闭预览窗口
 "autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-" 禁止缓存匹配项，每次都重新生成匹配项  
-let g:ycm_cache_omnifunc=0 
-set completeopt-=preview
-" 语法关键字补全              
-" let g:ycm_seed_identifiers_with_syntax=1  
+" 禁止缓存匹配项，每次都重新生成匹配项
+" let g:ycm_cache_omnifunc=0
+" set completeopt-=preview
+" 语法关键字补全
+" let g:ycm_seed_identifiers_with_syntax=1
 "
-" 修改对C函数的补全快捷键，默认是CTRL + space，修改为ALT + ;  
-let g:ycm_key_invoke_completion = '<C-l>'
+" 修改对C函数的补全快捷键，默认是CTRL + space，修改为ALT + ;
+" let g:ycm_key_invoke_completion = '<C-l>'
 
-let g:ycm_filetype_specific_completion_to_disable = {
-	\}
+" let g:ycm_filetype_specific_completion_to_disable = {}
 
-let g:ycm_filetype_blacklist = {
-	\}
+" let g:ycm_filetype_blacklist = {}
 
 let g:pymode_folding = 0
 let g:pymode_lint = 0
 let g:pymode_lint_on_write = 0
 let g:pymode_lint_checkers = ["pylint"]
 let g:pymode_rope = 0
+
+let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_save = 1
+let g:ale_python_pylint_args = "--rcfile=f:/g53/conf/pylintrc"
+

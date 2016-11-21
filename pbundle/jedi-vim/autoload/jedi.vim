@@ -1,7 +1,5 @@
 scriptencoding utf-8
 
-let g:jedi_python_version = 2
-
 " ------------------------------------------------------------------------
 " Settings initialization
 " ------------------------------------------------------------------------
@@ -28,6 +26,7 @@ let s:default_settings = {
     \ 'popup_on_dot': 1,
     \ 'documentation_command': "'K'",
     \ 'show_call_signatures': 1,
+    \ 'show_call_signatures_delay': 500,
     \ 'call_signature_escape': "'=`='",
     \ 'auto_close_doc': 1,
     \ 'max_doc_height': 30,
@@ -35,19 +34,20 @@ let s:default_settings = {
     \ 'quickfix_window_height': 10,
     \ 'completions_enabled': 1,
     \ 'force_py_version': "'auto'",
-    \ 'smart_auto_mappings': 1
+    \ 'smart_auto_mappings': 1,
+    \ 'use_tag_stack': 1
 \ }
 
-for [key, val] in items(s:deprecations)
-    if exists('g:jedi#'.key)
-        echom "'g:jedi#".key."' is deprecated. Please use 'g:jedi#".val."' instead. Sorry for the inconvenience."
-        exe 'let g:jedi#'.val.' = g:jedi#'.key
+for [s:key, s:val] in items(s:deprecations)
+    if exists('g:jedi#'.s:key)
+        echom "'g:jedi#".s:key."' is deprecated. Please use 'g:jedi#".s:val."' instead. Sorry for the inconvenience."
+        exe 'let g:jedi#'.s:val.' = g:jedi#'.s:key
     endif
 endfor
 
-for [key, val] in items(s:default_settings)
-    if !exists('g:jedi#'.key)
-        exe 'let g:jedi#'.key.' = '.val
+for [s:key, s:val] in items(s:default_settings)
+    if !exists('g:jedi#'.s:key)
+        exe 'let g:jedi#'.s:key.' = '.s:val
     endif
 endfor
 
@@ -121,26 +121,17 @@ function! jedi#reinit_python()
 endfunction
 
 
-function! jedi#pyeval(script)
-    if g:jedi_python_version == 2
-		return pyeval(a:script)
-    else g:jedi_python_version == 3
-		return py3eval(a:script)
-	endif
-endfunction
-
- 
+let s:_init_python = -1
 function! jedi#init_python()
-    if !exists('s:_init_python')
+    if s:_init_python == -1
         try
             let s:_init_python = s:init_python()
         catch
-            if !exists("g:jedi#squelch_py_warning")
-                echohl WarningMsg
-                echom "Error: jedi-vim failed to initialize Python: ".v:exception." (in ".v:throwpoint.")"
-                echohl None
-            endif
             let s:_init_python = 0
+            if !exists("g:jedi#squelch_py_warning")
+                echoerr "Error: jedi-vim failed to initialize Python: "
+                            \ .v:exception." (in ".v:throwpoint.")"
+            endif
         endtry
     endif
     return s:_init_python
@@ -149,7 +140,6 @@ endfunction
 
 let s:python_version = 'null'
 function! jedi#setup_py_version(py_version)
-	let g:jedi_python_version = a:py_version
     if a:py_version == 2
         let cmd_init = 'pyfile'
         let cmd_exec = 'python'
@@ -164,16 +154,28 @@ function! jedi#setup_py_version(py_version)
 
     try
         execute cmd_init.' '.s:script_path.'/initialize.py'
-        execute 'command! -nargs=1 PythonJedi '.cmd_exec.' <args>'
-        return 1
     catch
         throw "jedi#setup_py_version: ".v:exception
     endtry
+    execute 'command! -nargs=1 PythonJedi '.cmd_exec.' <args>'
+    return 1
 endfunction
 
 
 function! jedi#debug_info()
-    echom "Using Python version:" s:python_version
+    if s:python_version ==# 'null'
+        call s:init_python()
+    endif
+    echo 'Using Python version:' s:python_version
+    let pyeval = s:python_version == 3 ? 'py3eval' : 'pyeval'
+    PythonJedi print(' - sys.version: {0}'.format(', '.join([x.strip() for x in __import__('sys').version.split("\n")])))
+    PythonJedi print(' - site module: {0}'.format(__import__('site').__file__))
+    PythonJedi print('Jedi path: {0}'.format(jedi_vim.jedi.__file__))
+    PythonJedi print('Jedi version: {}'.format(jedi_vim.jedi.__version__))
+    echo 'jedi-vim git version: '
+    echon substitute(system('git -C '.s:script_path.' describe --tags --always --dirty'), '\v\n$', '', '')
+    echo 'jedi git submodule status: '
+    echon substitute(system('git -C '.s:script_path.' submodule status'), '\v\n$', '', '')
 endfunction
 
 
@@ -212,12 +214,7 @@ function! jedi#_vim_exceptions(str, is_eval)
     return l:result
 endfunction
 
-
-if !jedi#init_python()
-    " Do not define any functions when Python initialization failed.
-    finish
-endif
-
+call jedi#init_python()  " Might throw an error.
 
 " ------------------------------------------------------------------------
 " functions that call python code
@@ -269,6 +266,13 @@ endfun
 function! jedi#py_import_completions(argl, cmdl, pos)
     PythonJedi jedi_vim.py_import_completions()
 endfun
+
+function! jedi#clear_cache(bang)
+    PythonJedi jedi_vim.jedi.cache.clear_time_caches(True)
+    if a:bang
+        PythonJedi jedi_vim.jedi.parser.utils.ParserPickling.clear_cache()
+    endif
+endfunction
 
 
 " ------------------------------------------------------------------------
@@ -370,7 +374,7 @@ function! jedi#do_popup_on_dot_in_highlight()
     for a in highlight_groups
         for b in ['pythonString', 'pythonComment', 'pythonNumber']
             if a == b
-                return 0 
+                return 0
             endif
         endfor
     endfor
@@ -378,12 +382,67 @@ function! jedi#do_popup_on_dot_in_highlight()
 endfunc
 
 
+let s:show_call_signatures_last = [0, 0, '']
+function! jedi#show_call_signatures()
+    if s:_init_python == 0
+        return 1
+    endif
+    let [line, col] = [line('.'), col('.')]
+    let curline = getline(line)
+    let reload_signatures = 1
+
+    " Caching.  On the same line only.
+    if line == s:show_call_signatures_last[0]
+        " Check if the number of commas and parenthesis before or after the
+        " cursor has not changed since the last call, which means that the
+        " argument position was not changed and we can skip repainting.
+        let prevcol = s:show_call_signatures_last[1]
+        let prevline = s:show_call_signatures_last[2]
+        if substitute(curline[:col-2], '[^,()]', '', 'g')
+                    \ == substitute(prevline[:prevcol-2], '[^,()]', '', 'g')
+                    \ && substitute(curline[(col-2):], '[^,()]', '', 'g')
+                    \ == substitute(prevline[(prevcol-2):], '[^,()]', '', 'g')
+            let reload_signatures = 0
+        endif
+    endif
+    let s:show_call_signatures_last = [line, col, curline]
+
+    if reload_signatures
+        PythonJedi jedi_vim.show_call_signatures()
+    endif
+endfunction
+
+
+function! jedi#clear_call_signatures()
+    if s:_init_python == 0
+        return 1
+    endif
+
+    let s:show_call_signatures_last = [0, 0, '']
+    PythonJedi jedi_vim.clear_call_signatures()
+endfunction
+
+
 function! jedi#configure_call_signatures()
+    augroup jedi_call_signatures
+    autocmd! * <buffer>
     if g:jedi#show_call_signatures == 2  " Command line call signatures
         autocmd InsertEnter <buffer> let g:jedi#first_col = s:save_first_col()
     endif
-    autocmd InsertLeave <buffer> PythonJedi jedi_vim.clear_call_signatures()
-    autocmd CursorMovedI <buffer> PythonJedi jedi_vim.show_call_signatures()
+    autocmd InsertEnter <buffer> let s:show_call_signatures_last = [0, 0, '']
+    autocmd InsertLeave <buffer> call jedi#clear_call_signatures()
+    if g:jedi#show_call_signatures_delay > 0
+        autocmd InsertEnter <buffer> let b:_jedi_orig_updatetime = &updatetime
+                    \ | let &updatetime = g:jedi#show_call_signatures_delay
+        autocmd InsertLeave <buffer> if exists('b:_jedi_orig_updatetime')
+                    \ |   let &updatetime = b:_jedi_orig_updatetime
+                    \ |   unlet b:_jedi_orig_updatetime
+                    \ | endif
+        autocmd CursorHoldI <buffer> call jedi#show_call_signatures()
+    else
+        autocmd CursorMovedI <buffer> call jedi#show_call_signatures()
+    endif
+    augroup END
 endfunction
 
 
@@ -453,8 +512,10 @@ function! jedi#complete_opened(is_popup_on_dot)
             return "\<Down>"
         endif
         if a:is_popup_on_dot
-            " Prevent completion of the first entry with dot completion.
-            return "\<C-p>"
+            if &completeopt !~ '\(noinsert\|noselect\)'
+                " Prevent completion of the first entry with dot completion.
+                return "\<C-p>"
+            endif
         endif
     endif
     return ""
@@ -463,7 +524,7 @@ endfunction
 
 function! jedi#smart_auto_mappings()
     " Auto put import statement after from module.name<space> and complete
-    if search('\<from\s\+[A-Za-z0-9._]\{1,50}\%#\s*$', 'bcn', line('.'))
+    if search('\m^\s*from\s\+[A-Za-z0-9._]\{1,50}\%#\s*$', 'bcn', line('.'))
         " Enter character and start completion.
         return "\<space>import \<C-x>\<C-o>\<C-r>=jedi#complete_opened(1)\<CR>"
     endif
