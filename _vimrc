@@ -36,8 +36,8 @@ set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1     "设置支持打开的文�
 if g:isGUI
 	colorscheme molokai
 	if g:iswindows
-		set guifont=Monaco:h9:cANSI
-		" set guifont=Consolas:h11:cANSI:qDRAFT
+		" set guifont=Monaco:h9:cANSI
+		set guifont=Consolas:h10:cANSI:qDRAFT
 		" set guifontwide=微软雅黑:h9.5:w4.5:cANSI
 		" set guifontwide=新宋体:h11:cANSI
 		" set guifont=Inconsolata:h11:cANSI
@@ -61,7 +61,7 @@ if g:isGUI && g:iswindows
 endif
 
 if g:isGUI
-    set guioptions=ec
+    set guioptions=ecr
 	map <silent> <F11> :if &guioptions =~# 'm' <Bar>
 		\set guioptions-=m <Bar>
 	\else <Bar>
@@ -1016,7 +1016,7 @@ let g:SrcExpl_isUpdateTags = 0
 let g:SrcExpl_refreshTime = 300
 " let g:SrcExpl_prevDefKey = 'p'
 " let g:SrcExpl_nextDefKey = 'n'
-let g:SrcExpl_gobackKey = '<s-SPACE>'
+" let g:SrcExpl_gobackKey = '<s-SPACE>'
 
 
 "-------------------------------------------------------------
@@ -1058,3 +1058,4 @@ let g:ale_lint_on_enter = 1
 let g:ale_lint_on_save = 1
 let g:ale_python_pylint_args = "--rcfile=f:/g53/conf/pylintrc"
 
+let g:EasyMotion_leader_key = '<space>'
