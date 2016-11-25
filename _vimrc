@@ -38,6 +38,7 @@ if g:isGUI
 	if g:iswindows
 		" set guifont=Monaco:h9:cANSI
 		set guifont=Consolas:h10:cANSI:qDRAFT
+		" set guifont=Megatops_ProCoder_1.0:h9:cANSI:qDRAFT
 		" set guifontwide=微软雅黑:h9.5:w4.5:cANSI
 		" set guifontwide=新宋体:h11:cANSI
 		" set guifont=Inconsolata:h11:cANSI
@@ -126,6 +127,7 @@ Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'cSyntaxAfter'
 Bundle "scrooloose/syntastic"
 Bundle 'Shougo/neocomplete'
+Bundle 'terryma/vim-multiple-cursors'
 
 Bundle 'http://git.oschina.net/qiuchangjie/ShaderHighLight'
 
@@ -808,7 +810,7 @@ noremap <down>  <c-w>j
 noremap ,r		:CtrlPTag<cr>
 noremap ,s		:CtrlPBufTag<cr>
 noremap ,q		:CtrlPMRUFiles<cr>
-noremap ,b		:CtrlPBuffer<cr>
+noremap ,a		:CtrlPBuffer<cr>
 
 
 noremap ,p		:call SmartClist_PNav(0)<cr>
@@ -1058,4 +1060,4 @@ let g:ale_lint_on_enter = 1
 let g:ale_lint_on_save = 1
 let g:ale_python_pylint_args = "--rcfile=f:/g53/conf/pylintrc"
 
-let g:EasyMotion_leader_key = '<space>'
+let g:EasyMotion_leader_key = ','

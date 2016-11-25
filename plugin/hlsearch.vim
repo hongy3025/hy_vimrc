@@ -18,4 +18,4 @@ function ToggleHlsearch()
 endfunc
 
 noremap -  *N:setlocal hlsearch<cr>
-noremap <space>i  :call ToggleHlsearch()<cr>
+noremap <space>  :call ToggleHlsearch()<cr>
