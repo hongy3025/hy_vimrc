@@ -2,10 +2,12 @@ Windows Registry Editor Version 5.00
 
 [HKEY_CLASSES_ROOT\*\Shell\Edit with Vim Tab]
 @="Vim(&q)(Tab1)"
+"Icon"="\"F:\\fastapp\\gvim_portable\\vim.exe\""
 [HKEY_CLASSES_ROOT\*\Shell\Edit with Vim Tab\command]
 @="\"f:\\fastapp\\gvim_portable\\vim74\\gvim.exe\" -p --remote-tab-silent \"%1\" \"%*\""
 
 [HKEY_CLASSES_ROOT\*\Shell\Edit with Vim Win]
 @="Vim(&g)(Windows)"
+"Icon"="\"F:\\fastapp\\gvim_portable\\vim.exe\""
 [HKEY_CLASSES_ROOT\*\Shell\Edit with Vim Win\command]
-@="\"f:\\fastapp\\gvim_portable\\vim74\\gvim.exe\" \"%1\" \"%*\""
+@="\"F:\\fastapp\\gvim_portable\\vim74\\gvim.exe\" \"%1\" \"%*\""

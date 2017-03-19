@@ -31,13 +31,16 @@ endif
 set encoding=utf-8                                    "设置gvim内部编码
 set fileencoding=utf-8                                "设置当前文件编码
 set fileencodings=ucs-bom,utf-8,gbk,cp936,latin-1     "设置支持打开的文件的编码
+set sessionoptions=curdir,options
+set shortmess+=c
 
 " 设置代码配色方案
 if g:isGUI
 	colorscheme molokai
 	if g:iswindows
-		" set guifont=Monaco:h9:cANSI
-		set guifont=Consolas:h10:cANSI:qDRAFT
+		set guifont=Monaco:h9:cANSI
+		" set guifont=mononoki:h10:cANSI
+		" set guifont=Consolas:h10:cANSI:qDRAFT
 		" set guifont=Megatops_ProCoder_1.0:h9:cANSI:qDRAFT
 		" set guifontwide=微软雅黑:h9.5:w4.5:cANSI
 		" set guifontwide=新宋体:h11:cANSI
@@ -111,7 +114,6 @@ else
 endif
 
 Bundle 'xolox/vim-misc'
-Bundle 'xolox/vim-session'
 Bundle 'a.vim'
 Bundle 'Align'
 Bundle 'ccvext.vim'
@@ -126,12 +128,16 @@ Bundle 'tpope/vim-markdown'
 Bundle 'ctrlpvim/ctrlp.vim'
 Bundle 'cSyntaxAfter'
 Bundle "scrooloose/syntastic"
-Bundle 'Shougo/neocomplete'
 Bundle 'terryma/vim-multiple-cursors'
-
+Bundle 'repeat.vim'
+Bundle 'bsdelf/bufferhint'
+Bundle 'tshirtman/vim-cython'
 Bundle 'http://git.oschina.net/qiuchangjie/ShaderHighLight'
+Bundle "ntpeters/vim-better-whitespace"
 
+" Bundle 'Shougo/neocomplete'
 " Bundle 'davidhalter/jedi-vim'
+" Bundle 'xolox/vim-session'
 " Bundle 'fatih/vim-go'
 " Bundle 'Mark--Karkat'
 " Bundle 'OmniCppComplete'
@@ -142,7 +148,6 @@ Bundle 'http://git.oschina.net/qiuchangjie/ShaderHighLight'
 " Bundle 'javacomplete'
 " Bundle 'jiangmiao/auto-pairs'
 " Bundle 'mattn/emmet-vim'
-" Bundle 'repeat.vim'
 " Bundle 'scrooloose/nerdcommenter'
 " Bundle 'std_c.zip'
 " Bundle 'taglist.vim'
@@ -446,8 +451,25 @@ let g:neocomplete#sources#omni#functions = {
 " autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 " autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 " autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 " autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+"
+"" Options for python
+augroup python_autocmds
+autocmd!
+au FileType python set fo-=t
+au FileType python setlocal omnifunc=jedi#completions
+let g:jedi#completions_enabled = 0
+let g:jedi#auto_vim_configuration = 0
+if !exists('g:neocomplete#force_omni_input_patterns')
+let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.python = '%([^. \t].|^\s_@|^\s_from\s.+import |^\s_from |^\s_import )\w_'
+"let g:neocomplete#force_omni_input_patterns.python = '\h\w_|[^. \t].\w*'
+autocmd FileType python autocmd BufEnter <buffer> EnableStripWhitespaceOnSave
+augroup END
+
+
 " -----------------------------------------------------------------------------
 "  < nerdcommenter 插件配置 >
 " -----------------------------------------------------------------------------
@@ -732,6 +754,7 @@ autocmd BufRead,BufNewFile *.tbl set filetype=lua
 "--------------------------------
 " ctrlp
 "--------------------------------
+let g:user_command_async = 1
 let g:ctrlp_map = ',f'
 let g:ctrlp_working_path_mode = ''
 let g:ctrlp_custom_ignore = {
@@ -973,12 +996,14 @@ let MRU_Max_Entries = 100
 " 指在常规模式下按"\"键加"t"键，这里不是同时按，而是先按"\"键后按"t"键，间隔在一
 " 秒内，而<Leader>cs是先按"\"键再按"c"又再按"s"键
 "
-let g:jedi#completions_command = "<C-l>"
 let g:jedi#force_py_version = 2
-let g:jedi#show_call_signatures = 2
 let g:jedi#auto_close_doc=1
-let g:jedi#popup_on_dot=1
-let g:jedi#popup_select_first=0
+
+" let g:jedi#show_call_signatures = 0
+" let g:jedi#popup_on_dot=0
+" let g:jedi#popup_select_first=0
+" let g:jedi#completions_enabled=0
+" let g:jedi#smart_auto_mappings = 0
 
 let g:session_autoload="no"
 let g:session_autosave="yes"
@@ -1049,6 +1074,8 @@ let g:SrcExpl_refreshTime = 300
 
 " let g:ycm_filetype_blacklist = {}
 
+let g:ycm_filepath_completion_use_working_dir = 1
+
 let g:pymode_folding = 0
 let g:pymode_lint = 0
 let g:pymode_lint_on_write = 0
@@ -1061,3 +1088,39 @@ let g:ale_lint_on_save = 1
 let g:ale_python_pylint_args = "--rcfile=f:/g53/conf/pylintrc"
 
 let g:EasyMotion_leader_key = ','
+
+" nnoremap - :call bufferhint#Popup()<CR>
+
+" " Add the virtualenv's site-packages to vim path
+" if has('python')
+" python << EOF
+" import os
+" import sys
+" import vim
+" if 'VIRTUAL_ENV' in os.environ:
+"     project_base_dir = os.environ['VIRTUAL_ENV']
+"     sys.path.insert(0, project_base_dir)
+"     activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"     execfile(activate_this, dict(__file__=activate_this))
+" EOF
+" endif
+
+if has('python')
+python << EOF
+import sys
+sys.path.append('client/script/shared/lib')
+sys.path.append('client/script/lib')
+sys.path.append('client/script')
+sys.path.append('server/src')
+sys.path.append('server/mobile_server/Lib')
+sys.path.append('server/mobile_server')
+EOF
+endif
+
+nnoremap <leader>g :YcmCompleter GoTo<cr>
+nnoremap <leader>d :YcmCompleter GoToDefinition<cr>
+nnoremap <leader>c :YcmCompleter GoToDeclaration<cr>
+nnoremap <leader>r :YcmCompleter GoToReferences<cr>
+nnoremap <leader>i :YcmCompleter GoToInclude<cr>
+nnoremap <leader>q :YcmCompleter GetDoc<cr>
+
