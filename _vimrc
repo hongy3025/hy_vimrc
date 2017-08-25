@@ -850,13 +850,13 @@ noremap F		:bn<cr>
 noremap B		:bp<cr>
 noremap U		:call g:SrcExpl_ToggleActiveSrcExpl()<cr>
 
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <C-h> <Left>
-cnoremap <C-l> <Right>
-cnoremap <C-b> <S-Left>
-cnoremap <C-f> <S-Right>
-
+" cnoremap <C-a> <Home>
+" cnoremap <C-e> <End>
+" cnoremap <C-h> <Left>
+" cnoremap <C-l> <Right>
+" cnoremap <C-b> <S-Left>
+" cnoremap <C-f> <S-Right>
+ 
 noremap <M-z> <C-o>
 
 " noremap <2-LeftMouse> :silent! normal <c-]><cr>
